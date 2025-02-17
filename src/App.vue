@@ -28,12 +28,17 @@
 
         return false;
       },
+      handleQuestionsSet(questionsData) {
+        this.quizData = questionsData.results
+        localStorage.setItem('tailVueQuiz_quizData', JSON.stringify(questionsData.results));
+        this.isGameRunning = true;
+      }
     }
   }
 </script>
 
 <template>
-  <Setup v-if="!isGameRunning" v-cloak />
-  <Game v-if="isGameRunning" :quiz-data="quizData" v-cloak />
+  <Setup v-if="!isGameRunning" v-cloak @question-set="handleQuestionsSet" />
+  <Game v-if="isGameRunning" :quizData="quizData" v-cloak />
   <Results v-if="isGameEnded" :results="resultsData" />
 </template>
