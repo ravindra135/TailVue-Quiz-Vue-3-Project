@@ -44,14 +44,21 @@ import Question from './Question.vue';
       </div>
     </div>
 
+    <div class="absolute top-16">
+      <img src="@/assets/logo.png" alt="" class="mx-auto mb-4 mix-blend-multiply">
+      <h2 class="text-center text-xl mb-8 font-bold font-noto-sans ml-6">Your Daily Quiz Trainer</h2>
+    </div>
+
     <div class="p-12 rounded-2xl mx-auto my-auto bg-white shadow-md w-full max-w-4xl">
-      
+
+      <p class="text-gray-400 mb-4">Game ID: {{ Math.floor(Math.random() * 10000) }}</p>
+
       <!-- Questions bar -->
       <div class="w-full">
         <div class="flex w-full items-center justify-between">
-          <div v-for="(question, index) in quizData" :key="index" aria-disabled="false" data-step data-active="true" :class="{'group w-full flex items-center': index < totalQuestions - 1}">
+          <div v-for="(question, index) in quizData" :key="index" aria-disabled="false" data-step :data-active="(index + 1 === currentQuestion || index + 1 < currentQuestion) ? 'true' : 'false'"  :class="{'group w-full flex items-center': index < totalQuestions - 1}">
             <div class="relative">
-              <span class="relative grid h-10 w-10 place-items-center rounded-full bg-slate-200 group-data-[active=true]:bg-slate-800 group-data-[active=true]:text-white group-data-[completed=true]:bg-slate-800 group-data-[completed=true]:text-white">{{ index + 1 }}</span>
+              <span class="font-noto-sans relative grid h-10 w-10 place-items-center rounded-full bg-slate-200 group-data-[active=true]:bg-slate-800 group-data-[active=true]:text-white group-data-[completed=true]:bg-slate-800 group-data-[completed=true]:text-white">{{ index + 1 }}</span>
             </div>
             <div v-if="index < totalQuestions - 1" class="flex-1 h-1 bg-slate-200 group-data-[completed=true]:bg-slate-800"></div>
           </div>

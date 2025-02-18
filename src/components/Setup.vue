@@ -158,8 +158,8 @@
 
     <!-- Name Block -->
     <div class="p-12 rounded-2xl max-w-lg mx-auto my-auto bg-white shadow-md" v-if="!showGameSetupOptions" v-cloak>
-      <img src="@/assets/logo.png" alt="" class="mx-auto mb-8">
-      <h2 class="text-center text-xl mb-4 font-bold">Your Daily Quiz Trainer</h2>
+      <img src="@/assets/logo.png" alt="" class="mx-auto mb-4">
+      <h2 class="text-center text-xl mb-8 font-bold font-noto-sans ml-6">Your Daily Quiz Trainer</h2>
 
       <input v-model="title" type="text" placeholder="Enter Your Name" class="mb-4 border-2 border-gray-300 w-full px-5 py-2 rounded-lg focus:outline-none text-gray-600 font-bold tracking-wider">
 
