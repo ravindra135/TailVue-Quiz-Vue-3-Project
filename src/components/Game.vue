@@ -8,24 +8,67 @@ import Question from './Question.vue';
         totalQuestions: 0,
         currentQuestion: 1,
         correctAnswer: 0,
+        quizData: [],
         answersData: [],
+        gameId: "",
         error: false,
         errorMsg: ''
       }
     },
     props: {
-      quizData: {
+      gameData: {
         type: Array,
         required: true,
         default: () => [],
       }
     },
+    methods: {
+      answerSubmitted(data) {
+        // this.answersData.splice(data.questionId, 1, data);
+        if(data.isCorrectAnswer) {
+          this.correctAnswer += 1;
+        }
+        this.currentQuestion += 1;
+        this.answersData.push(data);
+        this.gameData.answersData = this.answersData
+        this.gameData.correctAnswer = this.correctAnswer
+        this.gameData.currentQuestion = this.currentQuestion
+        
+        // FIXME: Fix here, the below log is showing the updated data but not updating the localStorage
+        console.log(this.gameData);
+        localStorage.setItem('tailVueQuiz_gameData', JSON.stringify(this.gameData))
+        console.log(localStorage.getItem('tailVueQuiz_gameData')); // return []
+      }
+    },
     created() {
-      if(this.quizData.length === 0) {
+      if(this.gameData.quizData.length === 0) {
         this.error = true
         this.errorMsg = 'No Quiz Data Found'
       } else {
+        this.quizData = this.gameData.quizData
         this.totalQuestions = this.quizData.length
+      }
+
+      if(!this.error) {
+        if(!this.gameData.gameId) {
+          this.gameId = Math.floor(Math.random() * 1000000)
+          this.gameData.gameId = this.gameId
+          localStorage.setItem('tailVueQuiz_gameData', JSON.stringify(this.gameData))
+        } else {
+          this.gameId = this.gameData.gameId
+        }
+
+        if(this.gameData.answersData) {
+          this.answersData = this.gameData.answersData
+        }
+
+        if(this.gameData.currentQuestion) {
+          this.currentQuestion = this.gameData.currentQuestion
+        }
+
+        if(this.gameData.correctAnswer) {
+          this.correctAnswer = this.gameData.correctAnswer
+        }
       }
     },
     components: {
@@ -51,7 +94,7 @@ import Question from './Question.vue';
 
     <div class="p-12 rounded-2xl mx-auto my-auto bg-white shadow-md w-full max-w-4xl">
 
-      <p class="text-gray-400 mb-4">Game ID: {{ Math.floor(Math.random() * 10000) }}</p>
+      <p class="text-gray-400 mb-4">Game ID: {{ gameId }}</p>
 
       <!-- Questions bar -->
       <div class="w-full">
@@ -68,7 +111,7 @@ import Question from './Question.vue';
       <!-- Question Block -->
       <div class="w-full mt-8"> 
         <div v-for="(qtn, index) in quizData" :key="'question_block_' + index">
-          <Question v-if="(index < totalQuestions - 1) && (currentQuestion === index + 1)" :key="'question_' + index" :category="qtn.category" :question="qtn.question" :type="qtn.type" :correct_answer="qtn.correct_answer" :incorrect_answers="qtn.incorrect_answers" :difficulty="qtn.difficulty"  />
+          <Question @answer-submitted="answerSubmitted" v-if="(index <= totalQuestions - 1) && (currentQuestion === index + 1)" :key="'question_' + index" :questionId="index" :category="qtn.category" :question="qtn.question" :type="qtn.type" :correct_answer="qtn.correct_answer" :incorrect_answers="qtn.incorrect_answers" :difficulty="qtn.difficulty"  />
         </div>
       </div>
     </div>

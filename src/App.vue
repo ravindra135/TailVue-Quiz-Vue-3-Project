@@ -10,6 +10,7 @@
         isGameRunning: false,
         isGameEnded: false,
         previousGameExists: this.checkPrevGameExists(),
+        gameData: [],
         quizData: [],
         resultsData: []
       }
@@ -19,18 +20,18 @@
     },
     methods: {
       checkPrevGameExists() {
-        const tailVueQuizData = localStorage.getItem('tailVueQuiz_quizData');
-        if(tailVueQuizData) {
-          const data = JSON.parse(tailVueQuizData);
-          this.quizData = data;
+        const tailVueGameData = localStorage.getItem('tailVueQuiz_gameData');
+        if(tailVueGameData) {
+          const data = JSON.parse(tailVueGameData);
+          this.gameData = data;
+          this.quizData = this.gameData.quizData;
+          this.isGameRunning = true;
           return true;
         }
-
         return false;
       },
       handleQuestionsSet(questionsData) {
-        this.quizData = questionsData.results
-        localStorage.setItem('tailVueQuiz_quizData', JSON.stringify(questionsData.results));
+        this.gameData.quizData = questionsData.results;
         this.isGameRunning = true;
       }
     }
@@ -39,6 +40,6 @@
 
 <template>
   <Setup v-if="!isGameRunning" v-cloak @question-set="handleQuestionsSet" />
-  <Game v-if="isGameRunning" :quizData="quizData" v-cloak />
+  <Game v-if="isGameRunning" :gameData="gameData" v-cloak />
   <Results v-if="isGameEnded" :results="resultsData" />
 </template>
