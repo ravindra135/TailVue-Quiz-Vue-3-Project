@@ -8,12 +8,9 @@
     data() {
       return {
         isGameRunning: false,
-        isGameEnded: true,
+        isGameEnded: false,
         gameData: [],
-        resultsData: {
-          totalQuestions: 10,
-          correctAnswers: 8
-        }
+        resultsData: {}
       }
     },
     components: {
@@ -41,6 +38,9 @@
         localStorage.removeItem('tailVueQuiz_gameData');
         this.isGameRunning = false;
         this.isGameEnded = true;
+      },
+      playAgain() {
+        this.isGameEnded = false;
       }
     },
     created() {
@@ -52,5 +52,5 @@
 <template>
   <Setup v-if="!isGameRunning && !isGameEnded" v-cloak @question-set="handleQuestionsSet" />
   <Game v-if="isGameRunning" :gameData="gameData" v-cloak @game-ended="gameFinished" />
-  <Results v-if="isGameEnded" :results="resultsData" />
+  <Results v-if="isGameEnded" :results="resultsData" @play-again="playAgain" />
 </template>

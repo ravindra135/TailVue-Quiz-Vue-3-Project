@@ -1,6 +1,4 @@
 <script>
-import { errorMessages } from 'vue/compiler-sfc';
-
   export default {
     name: 'Results',
     data() {
@@ -25,7 +23,7 @@ import { errorMessages } from 'vue/compiler-sfc';
         this.title = name;
       }
 
-      if(this.results.correctAnswers && this.results.totalQuestions) {
+      if(this.results.totalQuestions) {
 
         let wrongAns = this.results.totalQuestions - this.results.correctAnswers;
         let header = "";
@@ -33,16 +31,16 @@ import { errorMessages } from 'vue/compiler-sfc';
         if(wrongAns == 0) {
           header = "🎯 Perfect Score"
           description = `Wow, ${this.title}! 🎉 You aced it with a perfect score! Share your victory with your friends!`
-        } else if (wrongAns == 1 || wrongAns == 2) {
+        } else if (wrongAns <= 2) {
           header = "😊 Almost There";
           description = `Great job, ${this.title}! ✨ Just a couple of slips, but you're almost perfect! Share your score!`
-        } else if (wrongAns >= 3 || wrongAns <= 5) {
+        } else if (wrongAns <= 5) {
           header = "😃 Good Effort";
           description = `Nice work, ${this.title}! 👍 You got most of them right! Keep it up and challenge a friend!`
-        } else if (wrongAns == 6 || wrongAns == 7) {
+        } else if (wrongAns <= 7) {
           header = "🤔 Keep Practicing";
           description = `Not bad, ${this.title}! 📚 A few more tries, and you'll nail it! Share your score and try again!`
-        } else if (wrongAns == 8 || wrongAns == 9) {
+        } else if (wrongAns <= 9) {
           header = "😅 Tough Round";
           description = `That was a tricky one, ${this.title}! 😵 But every challenge is a step toward mastery! Try again and beat your score!`
         } else {
@@ -59,10 +57,28 @@ import { errorMessages } from 'vue/compiler-sfc';
     },
     methods: {
       shareWithFriends() {
-        // TODO: 
+        const text = `I just played TailVue Quiz! 🧠🎉 Think you can beat my score? Play now! 👉 ${window.location.origin}`;
+        if(navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => {
+            alert('Text copied successfully');
+          }).catch(err => {
+            alert('Code 1: Action Failed')
+          })
+        } else {
+          let textArea = document.createElement('textarea')
+          textArea.value = text
+          document.body.appendChild(textArea)
+          textArea.select();
+          try {
+            document.execCommand('copy');
+            alert('Text copied successfully');
+          } catch (err) {
+            alert('Code 2: Action Failed')
+          }
+        }
       },
       playAgain() {
-        // TODO
+        this.$emit('play-again')
       }
     }
   }
@@ -103,8 +119,8 @@ import { errorMessages } from 'vue/compiler-sfc';
       </div>
 
       <div class="flex items-center gap-8 mt-12 justify-center">
-        <button class="px-5 py-3 rounded-lg bg-green-500 text-white cursor-pointer  font-noto-sans-3 transition duration-150 hover:shadow-md">Share With Your Friends</button>
-        <button class="px-5 py-3 rounded-lg bg-transparent border-2 border-gray-500 cursor-pointer font-noto-sans-3 transition duration-200 hover:shadow-md hover:bg-gray-500 hover:border-transparent hover:text-white">Play Again</button>
+        <button @click="shareWithFriends" class="px-5 py-3 rounded-lg bg-green-500 text-white cursor-pointer  font-noto-sans-3 transition duration-150 hover:shadow-md">Share With Your Friends</button>
+        <button @click="playAgain" class="px-5 py-3 rounded-lg bg-transparent border-2 border-gray-500 cursor-pointer font-noto-sans-3 transition duration-200 hover:shadow-md hover:bg-gray-500 hover:border-transparent hover:text-white">Play Again</button>
       </div>
     </div>
   </div>

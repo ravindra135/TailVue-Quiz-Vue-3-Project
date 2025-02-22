@@ -70,9 +70,7 @@
         // disable the button;
         event.target.disabled = true;
         event.target.innerText = "Creating...";
-        console.log("Create Game");
         const questionSet = await this.fetchQuestions(this.category, this.difficulty, this.type, this.amount);
-        console.log(questionSet);
         if(questionSet) {
           this.$emit('question-set', questionSet)
         } else {
@@ -84,11 +82,14 @@
       },
       fetchQuestions(category = "", difficulty = "", type = "", amount = 10) {
         // check token exists;
-        if(this._token) {
+        if(!this._token) {
+          this._token = this.getSessionToken()
+        }
+
           let baseUrl = "https://opentdb.com/api.php";
           let queryParams = {
             'amount': amount,
-            // 'token': this._token
+            'token': this._token
           }
 
           if(category) queryParams.category = category;
@@ -105,11 +106,6 @@
             });
 
           return questionResponse;
-        } else {
-          this.error = true;
-          this.errorMsg = "Failed to fetch questions. Please try again later";
-          return;
-        }
       },
       getSessionToken() {
         const token = localStorage.getItem("tailVueQuiz_token");
@@ -133,6 +129,13 @@
             console.log(error.message)
           }
         }
+      },
+      resetName() {
+        this.title = "";
+        this._token = "";
+        localStorage.removeItem('tailVueQuiz_name')
+        localStorage.removeItem("tailVueQuiz_token");
+        this.showGameSetupOptions = false;
       }
     },
     created() {
@@ -200,7 +203,11 @@
           </select>
         </div>
       </div>
-      <button @click="createGame" class="px-6 py-3 border-1 border-gray-400 font-source-sans-3 rounded-lg shadow hover:shadow-lg cursor-pointer mx-auto flex items-center justify-center mt-8 hover:border-transparent hover:bg-green-500 hover:text-white transition duration-100 ease-in">Submit</button>
+
+      <div class="flex items-center justify-center gap-12 mt-8">
+        <button @click="createGame" class="px-6 py-3 border-1 border-gray-400 font-source-sans-3 rounded-lg shadow hover:shadow-lg cursor-pointer hover:border-transparent hover:bg-green-500 hover:text-white transition duration-100 ease-in">Submit</button>
+        <button @click="resetName" class="px-6 py-3 border-1 border-gray-300 font-source-sans-3 rounded-lg shadow hover:shadow-lg cursor-pointer hover:border-transparent hover:bg-red-300 transition duration-100 ease-in">Reset</button>
+      </div>
     </div>
   </div>
 </template>
