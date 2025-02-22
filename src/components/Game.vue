@@ -1,5 +1,5 @@
 <script>
-import Question from './Question.vue';
+  import Question from './Question.vue';
 
   export default {
     name: 'Game',
@@ -32,28 +32,37 @@ import Question from './Question.vue';
         this.answersData.push(data);
         this.gameData.answersData = this.answersData
         this.gameData.correctAnswer = this.correctAnswer
-        this.gameData.currentQuestion = this.currentQuestion
-        
-        // FIXME: Fix here, the below log is showing the updated data but not updating the localStorage
-        console.log(this.gameData);
-        localStorage.setItem('tailVueQuiz_gameData', JSON.stringify(this.gameData))
-        console.log(localStorage.getItem('tailVueQuiz_gameData')); // return []
+        this.gameData.currentQuestion = this.currentQuestion        
+        this.updateTheGame()
+
+        if(this.currentQuestion > this.quizData.length) {
+         this.$emit('game-ended') 
+        }
+      },
+      updateTheGame() {
+        let obj = {
+          gameId: this.gameId,
+          quizData: this.quizData,
+          currentQuestion: this.currentQuestion,
+          correctAnswer: this.correctAnswer,
+          answersData: this.answersData
+        }
+        localStorage.setItem('tailVueQuiz_gameData', JSON.stringify(obj))
       }
     },
     created() {
       if(this.gameData.quizData.length === 0) {
         this.error = true
         this.errorMsg = 'No Quiz Data Found'
-      } else {
-        this.quizData = this.gameData.quizData
-        this.totalQuestions = this.quizData.length
       }
 
       if(!this.error) {
+        this.quizData = this.gameData.quizData
+        this.totalQuestions = this.quizData.length
+        
         if(!this.gameData.gameId) {
           this.gameId = Math.floor(Math.random() * 1000000)
           this.gameData.gameId = this.gameId
-          localStorage.setItem('tailVueQuiz_gameData', JSON.stringify(this.gameData))
         } else {
           this.gameId = this.gameData.gameId
         }
@@ -69,6 +78,8 @@ import Question from './Question.vue';
         if(this.gameData.correctAnswer) {
           this.correctAnswer = this.gameData.correctAnswer
         }
+
+        this.updateTheGame()
       }
     },
     components: {

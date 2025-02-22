@@ -8,11 +8,12 @@
     data() {
       return {
         isGameRunning: false,
-        isGameEnded: false,
-        previousGameExists: this.checkPrevGameExists(),
+        isGameEnded: true,
         gameData: [],
-        quizData: [],
-        resultsData: []
+        resultsData: {
+          totalQuestions: 10,
+          correctAnswers: 8
+        }
       }
     },
     components: {
@@ -22,10 +23,7 @@
       checkPrevGameExists() {
         const tailVueGameData = localStorage.getItem('tailVueQuiz_gameData');
         if(tailVueGameData) {
-          const data = JSON.parse(tailVueGameData);
-          this.gameData = data;
-          this.quizData = this.gameData.quizData;
-          this.isGameRunning = true;
+          this.gameData = JSON.parse(tailVueGameData);
           return true;
         }
         return false;
@@ -33,13 +31,26 @@
       handleQuestionsSet(questionsData) {
         this.gameData.quizData = questionsData.results;
         this.isGameRunning = true;
+      },
+      gameFinished() {
+        let gameData = JSON.parse(localStorage.getItem('tailVueQuiz_gameData'))
+        this.resultsData = {
+          totalQuestions: gameData.quizData.length,
+          correctAnswers: gameData.correctAnswer
+        }
+        localStorage.removeItem('tailVueQuiz_gameData');
+        this.isGameRunning = false;
+        this.isGameEnded = true;
       }
+    },
+    created() {
+      this.isGameRunning = this.checkPrevGameExists();
     }
   }
 </script>
 
 <template>
-  <Setup v-if="!isGameRunning" v-cloak @question-set="handleQuestionsSet" />
-  <Game v-if="isGameRunning" :gameData="gameData" v-cloak />
+  <Setup v-if="!isGameRunning && !isGameEnded" v-cloak @question-set="handleQuestionsSet" />
+  <Game v-if="isGameRunning" :gameData="gameData" v-cloak @game-ended="gameFinished" />
   <Results v-if="isGameEnded" :results="resultsData" />
 </template>

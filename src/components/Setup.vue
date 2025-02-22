@@ -13,7 +13,7 @@
         category: "",
         difficulty: "",
         type: "",
-        _token: this.getSessionToken()
+        _token: ""
       }
     },
     watch: {
@@ -136,7 +136,8 @@
       }
     },
     created() {
-      let name =   localStorage.getItem("tailVueQuiz_name");
+      this._token = this.getSessionToken();
+      let name = localStorage.getItem("tailVueQuiz_name");
       if(name) {
         this.title = name;
         this.showGameSetupOptions = true;
