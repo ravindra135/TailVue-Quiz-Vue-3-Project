@@ -71,11 +71,19 @@
         event.target.disabled = true;
         event.target.innerText = "Creating...";
         const questionSet = await this.fetchQuestions(this.category, this.difficulty, this.type, this.amount);
-        if(questionSet) {
-          this.$emit('question-set', questionSet)
+        if(questionSet.response_code == 0) {
+          this.$emit('question-set', questionSet.results)
         } else {
           this.error = true;
-          this.errorMsg = "Failed to create game. Please try again later";
+          let _errorMsg = new Map([
+            [1, "No Results Found. Try a New Category"],
+            [2, "Invalid Request, Please Check"],
+            [3, "Thanks For Playing your session has been expired, please reset the game."],
+            [4, "Reset the Game."],
+            [5, "Cool Down Sparky!!! Too many requests."]
+          ]);
+
+          this.errorMsg = _errorMsg.get(questionSet.response_code);
           event.target.disabled = false;
           event.target.innerText = "Create Game";
         }
@@ -86,26 +94,26 @@
           this._token = this.getSessionToken()
         }
 
-          let baseUrl = "https://opentdb.com/api.php";
-          let queryParams = {
-            'amount': amount,
-            'token': this._token
-          }
+        let baseUrl = "https://opentdb.com/api.php";
+        let queryParams = {
+          'amount': amount,
+          'token': this._token
+        }
 
-          if(category) queryParams.category = category;
-          if(difficulty) queryParams.difficulty = difficulty;
-          if(type) queryParams.type = type;
+        if(category) queryParams.category = category;
+        if(difficulty) queryParams.difficulty = difficulty;
+        if(type) queryParams.type = type;
 
-          const questionResponse = axios.get(baseUrl, {params: queryParams})
-            .then(response => {
-              return response.data;
-            }).catch(error => {
-              this.error = true;
-              this.errorMsg = "Failed: " + error.message;
-              return [];
-            });
+        const questionResponse = axios.get(baseUrl, {params: queryParams})
+          .then(response => {
+            return response.data;
+          }).catch(err => {
+            this.error = true;
+            this.errorMsg = "Failed: " + err.message;
+            return [];
+          });
 
-          return questionResponse;
+        return questionResponse;
       },
       getSessionToken() {
         const token = localStorage.getItem("tailVueQuiz_token");

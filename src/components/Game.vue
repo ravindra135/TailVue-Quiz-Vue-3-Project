@@ -33,10 +33,11 @@
         this.gameData.answersData = this.answersData
         this.gameData.correctAnswer = this.correctAnswer
         this.gameData.currentQuestion = this.currentQuestion        
-        this.updateTheGame()
 
         if(this.currentQuestion > this.quizData.length) {
          this.$emit('game-ended') 
+        } else {
+          this.updateTheGame()
         }
       },
       updateTheGame() {
@@ -110,7 +111,7 @@
       <!-- Questions bar -->
       <div class="w-full">
         <div class="flex w-full items-center justify-between">
-          <div v-for="(question, index) in quizData" :key="index" aria-disabled="false" data-step :data-active="(index + 1 === currentQuestion || index + 1 < currentQuestion) ? 'true' : 'false'"  :class="{'group w-full flex items-center': index < totalQuestions - 1}">
+          <div v-for="(question, index) in quizData" :key="index" aria-disabled="false" data-step :data-active="(index + 1 === currentQuestion || index + 1 <= currentQuestion) ? 'true' : 'false'"  :class="{'group w-full flex items-center': index < totalQuestions - 1}">
             <div class="relative">
               <span class="font-noto-sans relative grid h-10 w-10 place-items-center rounded-full bg-slate-200 group-data-[active=true]:bg-slate-800 group-data-[active=true]:text-white group-data-[completed=true]:bg-slate-800 group-data-[completed=true]:text-white">{{ index + 1 }}</span>
             </div>

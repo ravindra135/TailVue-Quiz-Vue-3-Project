@@ -21,12 +21,15 @@
         const tailVueGameData = localStorage.getItem('tailVueQuiz_gameData');
         if(tailVueGameData) {
           this.gameData = JSON.parse(tailVueGameData);
-          return true;
+          if(this.gameData.currentQuestion < this.gameData.quizData.length) {
+            return true; 
+          }
+          this.gameData = []
         }
         return false;
       },
       handleQuestionsSet(questionsData) {
-        this.gameData.quizData = questionsData.results;
+        this.gameData.quizData = questionsData;
         this.isGameRunning = true;
       },
       gameFinished() {
@@ -40,7 +43,10 @@
         this.isGameEnded = true;
       },
       playAgain() {
+        this.gameData = [];
         this.isGameEnded = false;
+        this.isGameRunning = false;
+        this.resultsData = {};
       }
     },
     created() {
