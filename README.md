@@ -88,7 +88,7 @@ npm run build
 
 ## 🙇‍♀️ About the Author
 
-Hi, I’m **Sumita**, a developer on a journey to master modern frontend tools. This is a stepping stone project, and I'm excited to grow with the community’s help! ❤️
+Hi, I’m **Ravindra Reddy**, a developer on a journey to master modern frontend tools. This is a stepping stone project, and I'm excited to grow with the community’s help! ❤️
 
 ---
 
